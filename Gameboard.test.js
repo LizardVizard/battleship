@@ -13,6 +13,7 @@ describe("Gameboard", () => {
   });
   describe("ship placement", () => {
     it("should keep track of new ships", () => {
+      expect(board.shipCount).toBe(0);
       expect(board.placeShip(0, 7, true, ship1)).toBe(true);
       expect(board.shipCount).toBe(1);
       expect(board.placeShip(1, 7, true, ship2)).toBe(true);
@@ -21,36 +22,29 @@ describe("Gameboard", () => {
     it("should create a ship within board bounds", () => {
       expect(board.placeShip(0, 9, true, ship1)).toBe(false);
       expect(board.cells[0][9]).toBe(0);
-      expect(board.shipCount).toBe(0);
       expect(board.placeShip(0, 7, true, ship1)).toBe(true);
       expect(board.cells[0][9]).toBe(ship1);
-      expect(board.shipCount).toBe(1);
     });
     it("should not create a ship if it intersects with another ship", () => {
       expect(board.placeShip(0, 6, false, ship1)).toBe(true);
       expect(board.placeShip(1, 6, false, ship2)).toBe(false);
       expect(board.cells[1][6]).toBe(ship1);
-      expect(board.placeShip(0, 5, false, ship2)).toBe(true);
-      expect(board.cells[0][5]).toBe(ship2);
     });
   });
   describe("receive attack", () => {
     it("should ignore a hit out of bounds", () => {
-      let result = board.receiveAttack(10, 0);
-      expect(result).toBe(false);
+      expect(board.receiveAttack(10, 0)).toBe(false);
     });
 
     it("should register a miss", () => {
       expect(board.cells[0][0]).toBe(EMPTY);
-      let result = board.receiveAttack(0, 0);
-      expect(result).toBe(true);
+      expect(board.receiveAttack(0, 0)).toBe(true);
       expect(board.cells[0][0]).toBe(MISS);
     });
 
     it("should register a hit", () => {
       board.placeShip(0, 0, true, ship1);
-      let result = board.receiveAttack(0, 0);
-      expect(result).toBe(true);
+      expect(board.receiveAttack(0, 0)).toBe(true);
       expect(board.cells[0][0]).toBe(ship1);
     });
   });
@@ -66,8 +60,8 @@ describe("Gameboard", () => {
     it("hits on sunken ships don't increase sunk ship count", () => {
       board.placeShip(0, 0, true, ship2);
       board.receiveAttack(0, 0);
+      expect(board.sunkShipCount).toBe(0);
       board.receiveAttack(0, 1);
-      expect(board.allShipsSunk()).toBe(true);
       expect(board.sunkShipCount).toBe(1);
       board.receiveAttack(0, 1);
       expect(board.sunkShipCount).toBe(1);

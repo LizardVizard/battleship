@@ -1,4 +1,4 @@
-import { Ship } from "./Ship";
+import { Ship } from "./Ship.js";
 
 export class ShipFactory {
   static createShip(size) {
