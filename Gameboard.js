@@ -6,6 +6,7 @@ export class Gameboard {
     this.size = size;
     this.cells = Array.from({ length: size }, () => Array(size).fill(EMPTY));
     this.shipCount = 0;
+    this.shipEntries = [null];
     this.sunkShipCount = 0;
   }
 
@@ -35,48 +36,94 @@ export class Gameboard {
 
   placeShip(x, y, horizontal, ship) {
     const shipSize = ship.size;
-    if (this.canPlaceShip(x, y, horizontal, shipSize)) {
-      // WARNING: setting board cells to ship references
-      // A better solution would be to use ids for ships
-      // and keep track of them in GameController
-      // Ship is simple enough that I'm not going to bother
-      //
-      if (horizontal) {
-        for (let j = y; j < y + shipSize; j++) {
-          this.cells[x][j] = ship;
-        }
-      } else {
-        for (let i = x; i < x + shipSize; i++) {
-          this.cells[i][y] = ship;
-        }
-      }
-      this.shipCount++;
+    if (!this.canPlaceShip(x, y, horizontal, shipSize)) return false;
 
-      return true;
+    this.shipCount++;
+    let coordinates = [];
+    // for (let delta = 0; delta < shipSize; delta++) {
+    //   const row = horizontal ? x : x + delta;
+    //   const col = horizontal ? y + delta : y;
+    //
+    //   this.cells[row][col] = this.shipCount
+    //   coordinates.push(row, col)
+    // }
+    if (horizontal) {
+      for (let col = y; col < y + shipSize; col++) {
+        this.cells[x][col] = this.shipCount;
+        coordinates.push([x, col]);
+      }
+    } else {
+      for (let row = x; row < x + shipSize; row++) {
+        this.cells[row][y] = this.shipCount;
+        coordinates.push([row, y]);
+      }
     }
-    return false;
+
+    const shipEntry = { id: this.shipCount, coordinates, ship };
+    this.shipEntries.push(shipEntry);
+
+    return true;
   }
 
   receiveAttack(x, y) {
-    // NOTE: use this in GameController for input validation
-    // if (!Number.isInteger(x) || !Number.isInteger(y))
-    // throw new Error("Invalid coordinates");
-    //
     if (this.isOutOfBounds(x, y)) return false;
     switch (this.cells[x][y]) {
       case MISS:
-        return false;
+        return { hit: false, isEmpty: false };
       case EMPTY:
         this.cells[x][y] = MISS;
-        return true;
+        return { hit: false, isEmpty: true };
       default:
-        if (!this.cells[x][y].isSunk()) {
-          this.cells[x][y].hit();
-          if (this.cells[x][y].isSunk()) this.sunkShipCount++;
+        const ship = this.shipEntries[this.cells[x][y]].ship;
+
+        if (!ship.isSunk()) {
+          ship.hit();
+          if (ship.isSunk()) {
+            // this.attackAdjacent(x, y);
+            this.sunkShipCount++;
+          }
         }
 
-        return true;
+        return { hit: true, sunk: ship.isSunk(), ship };
     }
+  }
+
+  attackAdjacent(x, y) {
+    const neighborsDelta = [
+      [-1, -1],
+      [0, -1],
+      [1, -1],
+      [-1, 0],
+      [1, 0],
+      [-1, 1],
+      [0, 1],
+      [1, 1],
+    ];
+    const visited = Array.from({ length: this.size }, () =>
+      Array(this.size).fill(false),
+    );
+
+    const traverse = (x, y) => {
+      visited[x][y] = true;
+      for (const [deltaX, deltaY] of neighborsDelta) {
+        const newX = x + deltaX;
+        const newY = y + deltaY;
+
+        if (this.isOutOfBounds(newX, newY) || visited[newX][newY]) continue;
+        switch (this.cells[newX][newY]) {
+          case MISS:
+            break;
+          case EMPTY:
+            // this.receiveAttack(newX, newY);
+            this.cells[newX][newY] = MISS;
+            break;
+          default:
+            traverse(newX, newY);
+            break;
+        }
+      }
+    };
+    traverse(x, y);
   }
 
   allShipsSunk() {
