@@ -77,7 +77,7 @@ export class Gameboard {
         const ship = this.shipEntries[this.cells[x][y]].ship;
 
         if (!ship.isSunk()) {
-          ship.hit();
+          ship.hit(x, y);
           if (ship.isSunk()) {
             // this.attackAdjacent(x, y);
             this.sunkShipCount++;
