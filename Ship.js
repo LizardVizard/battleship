@@ -10,11 +10,14 @@ export class Ship {
     if (!Number.isInteger(x) || !Number.isInteger(y)) {
       throw new Error("Invalid coordinates");
     }
+    if (this.isSunk()) {
+      return false;
+    }
     this.hits.push([x, y]);
-    this.hitCount++;
+    this.hitCount = this.hits.length;
   }
 
   isSunk() {
-    return this.hitCount >= this.size;
+    return this.hits.length === this.size;
   }
 }
