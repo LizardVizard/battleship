@@ -1,0 +1,63 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.playing-area {
+  display: flex;
+  margin: 5%;
+  justify-content: space-between;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(10, minmax(50px, 1fr));
+  grid-template-rows: repeat(10, minmax(50px, 1fr));
+  width: 500px;
+  height: 500px;
+  margin: 50px;
+  width: max-content;
+}
+
+.board.activated {
+  cursor: crosshair;
+}
+.board.deactivated {
+  opacity: 0.5;
+  background-color: lightgray;
+}
+
+.row {
+  display: flex;
+}
+
+.cell {
+  /* background-color: red; */
+  display: flex;
+  border: 1px solid #000;
+  flex-shrink: 0;
+  /* text-align: center; */
+  font-size: 3rem;
+  justify-content: center;
+  align-items: center;
+  /* aspect-ratio: 1; */
+}
+.cell.placementGood {
+  background-color: lightgreen;
+}
+.cell.placementBad {
+  background-color: pink;
+}
+
+.cell.ship {
+  background-color: lightblue;
+}
+.cell.hit {
+  background-color: orange;
+}
+.cell.sunk {
+  background-color: red;
+}
+.cell.miss {
+  background-color: gray;
+}
