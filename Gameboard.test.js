@@ -50,6 +50,10 @@ describe("Gameboard", () => {
           [1, 8],
         ]);
       });
+      it("should not place a ship where one exists", () => {
+        expect(board.placeShip(0, 7, true, ship1)).toBe(true);
+        expect(board.placeShip(0, 8, true, ship2)).toBe(false);
+      });
     });
     it("should not create a ship out of board bounds", () => {
       expect(board.placeShip(0, 9, true, ship1)).toBe(false);
