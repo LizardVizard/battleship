@@ -13,10 +13,13 @@ export class UIController {
     const boardSize = board.size;
     this.cells = [];
 
+    // TODO: classList.toggle()
     if (!isCurrentPlayer) {
       boardContainer.classList.add("activated");
       boardContainer.classList.remove("deactivated");
+      // boardContainer.classList.replace("deactivated", "activated");
     } else {
+      // boardContainer.classList.replace("activated", "deactivated");
       boardContainer.classList.remove("activated");
       boardContainer.classList.add("deactivated");
     }
@@ -39,7 +42,7 @@ export class UIController {
           default:
             const ship = board.shipEntries[boardCellValue].ship;
 
-            if (ship.hits.find((hit) => hit[0] === i && hit[1] === j)) {
+            if (ship.hits.some(([hitX, hitY]) => hitX === i && hitY === j)) {
               if (ship.isSunk()) cell.classList.add("hit");
               cell.innerText = "❌";
             }

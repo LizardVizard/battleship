@@ -17,14 +17,14 @@ describe("Ship", () => {
       expect(ship.size).toBe(2);
     });
     it("should have no hits", () => {
-      expect(ship.hitCount).toBe(0);
+      expect(ship.hits.length).toBe(0);
     });
     it("should not be sunk", () => {
       expect(ship.isSunk()).toBe(false);
     });
   });
 
-  describe("after one hit", () => {
+  describe("upon a hit", () => {
     beforeEach(() => {
       ship.hit(1, 2);
     });
@@ -34,25 +34,26 @@ describe("Ship", () => {
       expect(() => ship.hit("2", 1)).toThrow("Invalid coordinates");
     });
     it("should register a hit", () => {
-      expect(ship.hitCount).toBe(1);
+      expect(ship.hits.length).toBe(1);
     });
-    it("should record coordintaes of a hit", () => {
+    it("should record coordinates of a hit", () => {
       expect(ship.hits).toEqual([[1, 2]]);
     });
     it("should not sink before hit count matches size", () => {
       expect(ship.isSunk()).toBe(false);
     });
-  });
-  describe("after hit count matches size", () => {
-    beforeEach(() => {
+    it("should not register hits to the same section", () => {
       ship.hit(1, 2);
-      ship.hit(1, 3);
-    });
-
-    it("should register hits", () => {
-      expect(ship.hitCount).toBe(2);
+      expect(ship.hits).toEqual([[1, 2]]);
+      expect(ship.hits.length).toBe(1);
     });
     it("should sink when hit count matches size", () => {
+      ship.hit(1, 3);
+      expect(ship.hits).toEqual([
+        [1, 2],
+        [1, 3],
+      ]);
+      expect(ship.hits.length).toBe(2);
       expect(ship.isSunk()).toBe(true);
     });
   });

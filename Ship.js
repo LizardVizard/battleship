@@ -13,8 +13,10 @@ export class Ship {
     if (this.isSunk()) {
       return false;
     }
-    this.hits.push([x, y]);
-    this.hitCount = this.hits.length;
+
+    if (!this.hits.some(([hitX, hitY]) => hitX === x && hitY === y)) {
+      this.hits.push([x, y]);
+    }
   }
 
   isSunk() {
