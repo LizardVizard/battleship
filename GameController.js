@@ -29,7 +29,10 @@ export class GameController {
       return { winner: this.currentPlayer };
     }
 
-    if (!result.hit) {
+    // Swap players only when the attack was on an empty cell:
+    // - players do not swap after a hit
+    // - repeated attack on an empty cell(miss) does not skip a turn
+    if (!result.hit && result.isEmpty) {
       this.switchPlayers();
     }
 
