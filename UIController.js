@@ -50,7 +50,10 @@ export class UIController {
             break;
         }
 
-        if (!isCurrentPlayer) this.attachOnClickToCell(cell);
+        if (!isCurrentPlayer) {
+          this.attachOnClickToCell(cell);
+          this.attachOnHoverToCell(cell);
+        }
         boardContainer.appendChild(cell);
       }
     }
@@ -79,7 +82,25 @@ export class UIController {
     });
   }
 
+  attachOnEnterToCell(cell) {
+    const x = Number(cell.dataset.x);
+    const y = Number(cell.dataset.y);
+    cell.addEventListener("mouseenter", (e) => {
+      if (this.cellEnterHandler) this.cellEnterHandler(e, x, y);
+    });
+  }
+
+  // Register a callback on click
+  // Will receive (event, cell.dataset.x, cell.dataset.y)
+  onCellEnter(callback) {
+    if (typeof callback !== "function") return;
+    this.cellEnterHandler = callback;
+  }
+
+  // Register a callback on mouse enter
+  // Will receive (event, cell.dataset.x, cell.dataset.y)
   onCellClick(callback) {
+    if (typeof callback !== "function") return;
     this.cellClickHandler = callback;
   }
 

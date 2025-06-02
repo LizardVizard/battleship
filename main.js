@@ -7,7 +7,6 @@ import { GameController } from "./GameController.js";
 import { UIController } from "./UIController.js";
 import {
   getRandomCoordinates,
-  getRandomShipPlacement,
   ShipPlacementManager,
 } from "./ShipPlacementManager.js";
 

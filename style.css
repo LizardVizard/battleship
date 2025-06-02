@@ -42,12 +42,6 @@
   align-items: center;
   /* aspect-ratio: 1; */
 }
-.cell.placementGood {
-  background-color: lightgreen;
-}
-.cell.placementBad {
-  background-color: pink;
-}
 
 .cell.ship {
   background-color: lightblue;
@@ -60,4 +54,10 @@
 }
 .cell.miss {
   background-color: gray;
+}
+.cell.placement-good {
+  background-color: lightgreen;
+}
+.cell.placement-bad {
+  background-color: pink;
 }

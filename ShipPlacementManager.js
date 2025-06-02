@@ -54,18 +54,61 @@ export class ShipPlacementManager {
   placeForHuman(board, ships) {
     let currentIndex = 0;
 
+    // TODO: Write a callbackhandler for the ui
+    // The reason to have it in a callback is to be able to remove it later
+    const cb = (e) => {
+      this.ui.boardContainer1
+        .querySelectorAll(".placement-good, .placement-bad")
+        .forEach((cell) => {
+          cell.classList.remove("placement-good", "placement-bad");
+        });
+      const cell = e.target.closest(".cell");
+
+      if (!cell) return;
+      const x = Number(cell.dataset.x);
+      const y = Number(cell.dataset.y);
+
+      const shipSize = ships[currentIndex].size;
+
+      const shipPlacementClass = board.canPlaceShip(
+        x,
+        y,
+        this.horizontal,
+        shipSize,
+      )
+        ? "placement-good"
+        : "placement-bad";
+
+      if (this.horizontal) {
+        for (let j = y; j < Math.min(y + shipSize, board.size); j++) {
+          this.ui.boardContainer1
+            .querySelector(`[data-x="${x}"][data-y="${j}"]`)
+            .classList.add(shipPlacementClass);
+        }
+      } else {
+        for (let i = x; i < Math.min(x + shipSize, board.size); i++) {
+          this.ui.boardContainer1
+            .querySelector(`[data-x="${i}"][data-y="${y}"]`)
+            .classList.add(shipPlacementClass);
+        }
+      }
+    };
+
+    this.ui.boardContainer1.addEventListener("mouseover", cb);
+
     const placeAShip = (x, y) => {
       const currentShip = ships[currentIndex];
       if (board.placeShip(x, y, this.horizontal, currentShip)) {
         currentIndex++;
-        this.ui.render(
-          this.game.player1,
-          this.game.player2,
-          this.game.currentPlayer,
-          true,
-        );
       }
+      this.ui.render(
+        this.game.player1,
+        this.game.player2,
+        this.game.currentPlayer,
+        true,
+      );
       if (currentIndex === ships.length) {
+        this.ui.boardContainer1.removeEventListener("mouseover", cb);
         this.onDoneCallback?.();
       }
     };
@@ -75,13 +118,7 @@ export class ShipPlacementManager {
       if (e.button === 0) {
         console.log("Placing ship");
         placeAShip(x, y);
-        // this.ui.render(
-        //   gameController.player1,
-        //   gameController.player2,
-        //   gameController.currentPlayer,
-        // );
       } else if (e.button === 2) {
-        // horizontal = !horizontal;
         this.changeDirection();
         console.log("Changed orientation");
       }
@@ -90,5 +127,11 @@ export class ShipPlacementManager {
 
   changeDirection() {
     this.horizontal = !this.horizontal;
+    this.ui.render(
+      this.game.player1,
+      this.game.player2,
+      this.game.currentPlayer,
+      true,
+    );
   }
 }
