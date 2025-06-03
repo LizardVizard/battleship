@@ -69,7 +69,7 @@ spm.placeFleet(gameController.player2.board, true, () => {
 
       while (gameController.currentPlayer.isComputer) {
         const { x, y } = getRandomCoordinates(BOARD_SIZE);
-        gameController.takeTurn(x, y);
+        const result = gameController.takeTurn(x, y);
         uiController.render(
           gameController.player1,
           gameController.player2,
@@ -77,6 +77,8 @@ spm.placeFleet(gameController.player2.board, true, () => {
         );
         if (result.winner) {
           alert(result.winner.name);
+          // uiController.showWinner(result.winner)
+          break;
         }
       }
     });
