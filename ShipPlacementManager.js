@@ -84,46 +84,29 @@ export class ShipPlacementManager {
     });
 
     this.ui.onCellHover((_, x, y) => {
-      // FIX: using this.ui.boardContainer1
+      // FIX: using boardContainer
       // should receive a reference to the element
       // right now if both player were human, all of the changes
       // for the second player would appear on the board of the first one.
       console.log("cb");
-      console.log(this);
-      this.ui.boardContainer1
-        .querySelectorAll(".placement-good, .placement-bad")
-        .forEach((cell) => {
-          cell.classList.remove("placement-good", "placement-bad");
-        });
 
       const shipSize = ships[currentIndex].size;
 
-      const shipPlacementClass = board.canPlaceShip(
+      const isValid = board.canPlaceShip(x, y, this.horizontal, shipSize);
+
+      this.ui.highlightShip(
+        boardContainer,
         x,
         y,
         this.horizontal,
         shipSize,
-      )
-        ? "placement-good"
-        : "placement-bad";
-
-      if (this.horizontal) {
-        for (let j = y; j < Math.min(y + shipSize, board.size); j++) {
-          this.ui.boardContainer1
-            .querySelector(`[data-x="${x}"][data-y="${j}"]`)
-            .classList.add(shipPlacementClass);
-        }
-      } else {
-        for (let i = x; i < Math.min(x + shipSize, board.size); i++) {
-          this.ui.boardContainer1
-            .querySelector(`[data-x="${i}"][data-y="${y}"]`)
-            .classList.add(shipPlacementClass);
-        }
-      }
+        board.size,
+        isValid,
+      );
     });
 
-    this.ui.attachOnBoardClick(this.ui.boardContainer1);
-    this.ui.attachOnBoardHover(this.ui.boardContainer1);
+    this.ui.attachOnBoardClick(boardContainer);
+    this.ui.attachOnBoardHover(boardContainer);
   }
 
   changeDirection() {

@@ -29,8 +29,6 @@ export class UIController {
       this.detachOnBoardClick(boardContainer);
     }
 
-    // if
-
     for (let i = 0; i < boardSize; i++) {
       for (let j = 0; j < boardSize; j++) {
         const cell = document.createElement("div");
@@ -75,6 +73,45 @@ export class UIController {
       player2 === currentPlayer,
       showShips,
     );
+  }
+
+  clearHighlights(boardContainer) {
+    boardContainer
+      .querySelectorAll(".placement-good, .placement-bad")
+      .forEach((cell) => {
+        cell.classList.remove("placement-good", "placement-bad");
+      });
+  }
+
+  highlightShip(
+    boardContainer,
+    x,
+    y,
+    isHorizontal,
+    shipSize,
+    boardSize,
+    isValid,
+  ) {
+    this.clearHighlights(boardContainer);
+
+    const placementClass = isValid ? "placement-good" : "placement-bad";
+    let limit;
+
+    if (isHorizontal) {
+      limit = Math.min(y + shipSize, boardSize);
+      for (let j = y; j < limit; j++) {
+        boardContainer
+          .querySelector(`[data-x="${x}"][data-y="${j}"]`)
+          .classList.add(placementClass);
+      }
+    } else {
+      limit = Math.min(x + shipSize, boardSize);
+      for (let i = x; i < limit; i++) {
+        boardContainer
+          .querySelector(`[data-x="${i}"][data-y="${y}"]`)
+          .classList.add(placementClass);
+      }
+    }
   }
 
   // attachOnClickToCell(cell) {
