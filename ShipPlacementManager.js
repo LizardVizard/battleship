@@ -22,20 +22,25 @@ export class ShipPlacementManager {
     this.horizontal = true;
   }
 
-  placeFleet(board, isComputer, callback) {
+  placeFleet(board, boardContainer, isComputer, callback) {
+    this.ui.render(
+      this.game.player1,
+      this.game.player2,
+      this.game.currentPlayer,
+    );
     this.onDoneCallback = callback;
     const ships = ShipFactory.createFleet(this.shipSizes);
     switch (isComputer) {
       case true:
-        this.placeForComputer(board, ships);
+        this.placeForComputer(board, boardContainer, ships);
         break;
       case false:
-        this.placeForHuman(board, ships);
+        this.placeForHuman(board, boardContainer, ships);
         break;
     }
   }
 
-  placeForComputer(board, ships) {
+  placeForComputer(board, _boardContainer, ships) {
     for (const ship of ships) {
       let placed = false;
       while (!placed) {
@@ -51,7 +56,7 @@ export class ShipPlacementManager {
     this.onDoneCallback?.();
   }
 
-  placeForHuman(board, ships) {
+  placeForHuman(board, boardContainer, ships) {
     let currentIndex = 0;
 
     const placeAShip = (x, y) => {
@@ -66,8 +71,8 @@ export class ShipPlacementManager {
         true,
       );
       if (currentIndex === ships.length) {
-        this.ui.detachOnBoardClick(this.ui.boardContainer1);
-        this.ui.detachOnBoardHover(this.ui.boardContainer1);
+        this.ui.detachOnBoardClick(boardContainer);
+        this.ui.detachOnBoardHover(boardContainer);
         this.onDoneCallback?.();
       }
     };

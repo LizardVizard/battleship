@@ -39,53 +39,63 @@ const spm = new ShipPlacementManager(
   uiController,
 );
 
-spm.placeFleet(gameController.player2.board, true, () => {
-  gameController.switchPlayers();
-  uiController.render(
-    gameController.player1,
-    gameController.player2,
-    gameController.currentPlayer,
-  );
-  spm.placeFleet(gameController.player1.board, false, () => {
+spm.placeFleet(
+  gameController.player2.board,
+  uiController.boardContainer2,
+  gameController.player2.isComputer,
+  () => {
     gameController.switchPlayers();
     uiController.render(
       gameController.player1,
       gameController.player2,
       gameController.currentPlayer,
     );
-    uiController.onCellClick((_, x, y) => {
-      const result = gameController.takeTurn(x, y);
-
-      uiController.render(
-        gameController.player1,
-        gameController.player2,
-        gameController.currentPlayer,
-      );
-
-      if (result.winner) {
-        alert(result.winner.name);
-        uiController.onCellClick(() => {});
-        // uiController.showWinner(result.winner)
-      }
-
-      while (gameController.currentPlayer.isComputer) {
-        const { x, y } = getRandomCoordinates(BOARD_SIZE);
-        const result = gameController.takeTurn(x, y);
+    spm.placeFleet(
+      gameController.player1.board,
+      uiController.boardContainer1,
+      gameController.player1.isComputer,
+      () => {
+        gameController.switchPlayers();
         uiController.render(
           gameController.player1,
           gameController.player2,
           gameController.currentPlayer,
         );
-        if (result.winner) {
-          alert(result.winner.name);
-          uiController.onCellClick(() => {});
-          // uiController.showWinner(result.winner)
-          break;
-        }
-      }
-    });
-  });
-});
+        uiController.onCellClick((_, x, y) => {
+          const result = gameController.takeTurn(x, y);
+
+          uiController.render(
+            gameController.player1,
+            gameController.player2,
+            gameController.currentPlayer,
+          );
+
+          if (result.winner) {
+            alert(result.winner.name);
+            uiController.onCellClick(() => {});
+            // uiController.showWinner(result.winner)
+          }
+
+          while (gameController.currentPlayer.isComputer) {
+            const { x, y } = getRandomCoordinates(BOARD_SIZE);
+            const result = gameController.takeTurn(x, y);
+            uiController.render(
+              gameController.player1,
+              gameController.player2,
+              gameController.currentPlayer,
+            );
+            if (result.winner) {
+              alert(result.winner.name);
+              uiController.onCellClick(() => {});
+              // uiController.showWinner(result.winner)
+              break;
+            }
+          }
+        });
+      },
+    );
+  },
+);
 
 // .ui.render(
 //   gameController.player1,
