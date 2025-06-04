@@ -54,9 +54,39 @@ export class ShipPlacementManager {
   placeForHuman(board, ships) {
     let currentIndex = 0;
 
+    const placeAShip = (x, y) => {
+      const currentShip = ships[currentIndex];
+      if (board.placeShip(x, y, this.horizontal, currentShip)) {
+        currentIndex++;
+      }
+      this.ui.render(
+        this.game.player1,
+        this.game.player2,
+        this.game.currentPlayer,
+        true,
+      );
+      if (currentIndex === ships.length) {
+        this.ui.boardContainer1.removeEventListener("mouseover", cb);
+        this.ui.detachOnBoardClick(this.ui.boardContainer1);
+        this.onDoneCallback?.();
+      }
+    };
+
+    this.ui.onCellClick((e, x, y) => {
+      e.preventDefault();
+      if (e.button === 0) {
+        console.log("Placing ship");
+        placeAShip(x, y);
+      } else if (e.button === 2) {
+        this.changeDirection();
+        console.log("Changed orientation");
+      }
+    });
+
     // TODO: Write a callbackhandler for the ui
     // The reason to have it in a callback is to be able to remove it later
     const cb = (e) => {
+      console.log("cb");
       this.ui.boardContainer1
         .querySelectorAll(".placement-good, .placement-bad")
         .forEach((cell) => {
@@ -95,34 +125,7 @@ export class ShipPlacementManager {
     };
 
     this.ui.boardContainer1.addEventListener("mouseover", cb);
-
-    const placeAShip = (x, y) => {
-      const currentShip = ships[currentIndex];
-      if (board.placeShip(x, y, this.horizontal, currentShip)) {
-        currentIndex++;
-      }
-      this.ui.render(
-        this.game.player1,
-        this.game.player2,
-        this.game.currentPlayer,
-        true,
-      );
-      if (currentIndex === ships.length) {
-        this.ui.boardContainer1.removeEventListener("mouseover", cb);
-        this.onDoneCallback?.();
-      }
-    };
-
-    this.ui.onCellClick((e, x, y) => {
-      e.preventDefault();
-      if (e.button === 0) {
-        console.log("Placing ship");
-        placeAShip(x, y);
-      } else if (e.button === 2) {
-        this.changeDirection();
-        console.log("Changed orientation");
-      }
-    });
+    this.ui.attachOnBoardClick(this.ui.boardContainer1);
   }
 
   changeDirection() {

@@ -64,6 +64,7 @@ spm.placeFleet(gameController.player2.board, true, () => {
 
       if (result.winner) {
         alert(result.winner.name);
+        uiController.onCellClick(() => {});
         // uiController.showWinner(result.winner)
       }
 
@@ -77,6 +78,7 @@ spm.placeFleet(gameController.player2.board, true, () => {
         );
         if (result.winner) {
           alert(result.winner.name);
+          uiController.onCellClick(() => {});
           // uiController.showWinner(result.winner)
           break;
         }

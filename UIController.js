@@ -6,6 +6,8 @@ export class UIController {
 
     this.boardContainer1 = board1;
     this.boardContainer2 = board2;
+
+    this.boundBoardClickHandler = this.handleBoardClick.bind(this);
   }
 
   renderBoard(board, boardContainer, isCurrentPlayer, showShips = false) {
@@ -17,12 +19,16 @@ export class UIController {
     if (!isCurrentPlayer) {
       boardContainer.classList.add("activated");
       boardContainer.classList.remove("deactivated");
+      this.attachOnBoardClick(boardContainer);
       // boardContainer.classList.replace("deactivated", "activated");
     } else {
       // boardContainer.classList.replace("activated", "deactivated");
       boardContainer.classList.remove("activated");
       boardContainer.classList.add("deactivated");
+      this.detachOnBoardClick(boardContainer);
     }
+
+    // if
 
     for (let i = 0; i < boardSize; i++) {
       for (let j = 0; j < boardSize; j++) {
@@ -50,10 +56,6 @@ export class UIController {
             break;
         }
 
-        if (!isCurrentPlayer) {
-          this.attachOnClickToCell(cell);
-          this.attachOnHoverToCell(cell);
-        }
         boardContainer.appendChild(cell);
       }
     }
@@ -82,36 +84,26 @@ export class UIController {
     });
   }
 
-  attachOnEnterToCell(cell) {
+  attachOnBoardClick(board) {
+    board.addEventListener("mousedown", this.boundBoardClickHandler);
+  }
+
+  detachOnBoardClick(board) {
+    board.removeEventListener("mousedown", this.boundBoardClickHandler);
+  }
+
+  handleBoardClick(e) {
+    const cell = e.target.closest(".cell");
+    if (!cell) return;
     const x = Number(cell.dataset.x);
     const y = Number(cell.dataset.y);
-    cell.addEventListener("mouseenter", (e) => {
-      if (this.cellEnterHandler) this.cellEnterHandler(e, x, y);
-    });
+    if (this.cellClickHandler) this.cellClickHandler(e, x, y);
   }
 
-  // Register a callback on click
-  // Will receive (event, cell.dataset.x, cell.dataset.y)
-  onCellEnter(callback) {
-    if (typeof callback !== "function") return;
-    this.cellEnterHandler = callback;
-  }
-
-  // Register a callback on mouse enter
-  // Will receive (event, cell.dataset.x, cell.dataset.y)
+  // Register a callback for mouse click
+  // Callback will receive (event, cell.dataset.x, cell.dataset.y)
   onCellClick(callback) {
     if (typeof callback !== "function") return;
     this.cellClickHandler = callback;
-  }
-
-  // TODO: Maybe add ship placement visualisation
-  attachOnHoverToCell(cell) {
-    cell.addEventListener("hover", (e) => {
-      if (this.cellHoverHandler) this.cellHoverHandler(e, cell);
-    });
-  }
-
-  onCellHover(callback) {
-    this.cellHoverHandler = callback;
   }
 }
