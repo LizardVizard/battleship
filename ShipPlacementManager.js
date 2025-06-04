@@ -66,8 +66,8 @@ export class ShipPlacementManager {
         true,
       );
       if (currentIndex === ships.length) {
-        this.ui.boardContainer1.removeEventListener("mouseover", cb);
         this.ui.detachOnBoardClick(this.ui.boardContainer1);
+        this.ui.detachOnBoardHover(this.ui.boardContainer1);
         this.onDoneCallback?.();
       }
     };
@@ -83,20 +83,18 @@ export class ShipPlacementManager {
       }
     });
 
-    // TODO: Write a callbackhandler for the ui
-    // The reason to have it in a callback is to be able to remove it later
-    const cb = (e) => {
+    this.ui.onCellHover((_, x, y) => {
+      // FIX: using this.ui.boardContainer1
+      // should receive a reference to the element
+      // right now if both player were human, all of the changes
+      // for the second player would appear on the board of the first one.
       console.log("cb");
+      console.log(this);
       this.ui.boardContainer1
         .querySelectorAll(".placement-good, .placement-bad")
         .forEach((cell) => {
           cell.classList.remove("placement-good", "placement-bad");
         });
-      const cell = e.target.closest(".cell");
-
-      if (!cell) return;
-      const x = Number(cell.dataset.x);
-      const y = Number(cell.dataset.y);
 
       const shipSize = ships[currentIndex].size;
 
@@ -122,10 +120,10 @@ export class ShipPlacementManager {
             .classList.add(shipPlacementClass);
         }
       }
-    };
+    });
 
-    this.ui.boardContainer1.addEventListener("mouseover", cb);
     this.ui.attachOnBoardClick(this.ui.boardContainer1);
+    this.ui.attachOnBoardHover(this.ui.boardContainer1);
   }
 
   changeDirection() {

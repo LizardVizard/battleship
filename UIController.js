@@ -8,6 +8,7 @@ export class UIController {
     this.boardContainer2 = board2;
 
     this.boundBoardClickHandler = this.handleBoardClick.bind(this);
+    this.boundBoardHoverHandler = this.handleBoardHover.bind(this);
   }
 
   renderBoard(board, boardContainer, isCurrentPlayer, showShips = false) {
@@ -76,12 +77,20 @@ export class UIController {
     );
   }
 
-  attachOnClickToCell(cell) {
-    const x = Number(cell.dataset.x);
-    const y = Number(cell.dataset.y);
-    cell.addEventListener("mousedown", (e) => {
-      if (this.cellClickHandler) this.cellClickHandler(e, x, y);
-    });
+  // attachOnClickToCell(cell) {
+  //   const x = Number(cell.dataset.x);
+  //   const y = Number(cell.dataset.y);
+  //   cell.addEventListener("mousedown", (e) => {
+  //     if (this.cellClickHandler) this.cellClickHandler(e, x, y);
+  //   });
+  // }
+
+  attachOnBoardHover(board) {
+    board.addEventListener("mouseover", this.boundBoardHoverHandler);
+  }
+
+  detachOnBoardHover(board) {
+    board.removeEventListener("mouseover", this.boundBoardHoverHandler);
   }
 
   attachOnBoardClick(board) {
@@ -100,10 +109,25 @@ export class UIController {
     if (this.cellClickHandler) this.cellClickHandler(e, x, y);
   }
 
+  handleBoardHover(e) {
+    const cell = e.target.closest(".cell");
+    if (!cell) return;
+    const x = Number(cell.dataset.x);
+    const y = Number(cell.dataset.y);
+    if (this.cellHoverHandler) this.cellHoverHandler(e, x, y);
+  }
+
   // Register a callback for mouse click
   // Callback will receive (event, cell.dataset.x, cell.dataset.y)
   onCellClick(callback) {
     if (typeof callback !== "function") return;
     this.cellClickHandler = callback;
+  }
+
+  // Register a callback for mouse hover
+  // Callback will receive (event, cell.dataset.x, cell.dataset.y)
+  onCellHover(callback) {
+    if (typeof callback !== "function") return;
+    this.cellHoverHandler = callback;
   }
 }
