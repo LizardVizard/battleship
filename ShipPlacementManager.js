@@ -80,21 +80,13 @@ export class ShipPlacementManager {
     this.ui.onCellClick((e, x, y) => {
       e.preventDefault();
       if (e.button === 0) {
-        console.log("Placing ship");
         placeAShip(x, y);
       } else if (e.button === 2) {
         this.changeDirection();
-        console.log("Changed orientation");
       }
     });
 
     this.ui.onCellHover((_, x, y) => {
-      // FIX: using boardContainer
-      // should receive a reference to the element
-      // right now if both player were human, all of the changes
-      // for the second player would appear on the board of the first one.
-      console.log("cb");
-
       const shipSize = ships[currentIndex].size;
 
       const isValid = board.canPlaceShip(x, y, this.horizontal, shipSize);
