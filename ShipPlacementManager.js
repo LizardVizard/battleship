@@ -56,31 +56,30 @@ export class ShipPlacementManager {
     this.onDoneCallback?.();
   }
 
+  placeShipAt(board, x, y, ship) {
+    return board.placeShip(x, y, this.horizontal, ship) ? 1 : 0;
+  }
+
   placeForHuman(board, boardContainer, ships) {
     let currentIndex = 0;
-
-    const placeAShip = (x, y) => {
-      const currentShip = ships[currentIndex];
-      if (board.placeShip(x, y, this.horizontal, currentShip)) {
-        currentIndex++;
-      }
-      this.ui.render(
-        this.game.player1,
-        this.game.player2,
-        this.game.currentPlayer,
-        true,
-      );
-      if (currentIndex === ships.length) {
-        this.ui.detachOnBoardClick(boardContainer);
-        this.ui.detachOnBoardHover(boardContainer);
-        this.onDoneCallback?.();
-      }
-    };
 
     this.ui.onCellClick((e, x, y) => {
       e.preventDefault();
       if (e.button === 0) {
-        placeAShip(x, y);
+        currentIndex += this.placeShipAt(board, x, y, ships[currentIndex]);
+
+        this.ui.render(
+          this.game.player1,
+          this.game.player2,
+          this.game.currentPlayer,
+          true,
+        );
+
+        if (currentIndex === ships.length) {
+          this.ui.detachOnBoardClick(boardContainer);
+          this.ui.detachOnBoardHover(boardContainer);
+          this.onDoneCallback?.();
+        }
       } else if (e.button === 2) {
         this.changeDirection();
       }
