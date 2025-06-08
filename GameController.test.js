@@ -13,6 +13,11 @@ describe("Game controller", () => {
     game.player2.board.placeShip(0, 0, true, ship1);
     game.player2.board.placeShip(1, 0, true, ship2);
   });
+  test("switching players", () => {
+    expect(game.currentPlayer).toEqual(game.player1);
+    game.switchPlayers();
+    expect(game.currentPlayer).toEqual(game.player2);
+  });
   describe("taking a turn", () => {
     describe("attack is a miss", () => {
       it("should swap players", () => {
@@ -22,6 +27,7 @@ describe("Game controller", () => {
       });
       it("should return an object with miss data", () => {
         expect(game.takeTurn(2, 0)).toEqual({ hit: false, isEmpty: true });
+        // Attacking the same spot after a miss gives a different result
         game.switchPlayers();
         expect(game.takeTurn(2, 0)).toEqual({ hit: false, isEmpty: false });
       });
