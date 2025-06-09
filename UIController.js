@@ -1,11 +1,11 @@
 import { EMPTY, MISS } from "./Gameboard.js";
 
 export class UIController {
-  constructor(board1, board2) {
+  constructor(boardContainer1, boardContainer2) {
     this.cells = [];
 
-    this.boardContainer1 = board1;
-    this.boardContainer2 = board2;
+    this.boardContainer1 = boardContainer1;
+    this.boardContainer2 = boardContainer2;
 
     this.boundBoardClickHandler = this.handleBoardClick.bind(this);
     this.boundBoardHoverHandler = this.handleBoardHover.bind(this);
@@ -16,6 +16,7 @@ export class UIController {
     const boardSize = board.size;
     this.cells = [];
 
+    // NOTE: Current player is attacking not current player
     // TODO: classList.toggle()
     if (!isCurrentPlayer) {
       boardContainer.classList.add("activated");
