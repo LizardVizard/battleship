@@ -1,5 +1,10 @@
 // TODO:
 // - make pop ups in boards to explain what's going on
+// - finish tests
+// - AI:
+//    - stack/queue of next hits
+//    - if it's empty make a random hit
+//    - if it's not empty - pop and attack, if a hit, add adjacent cells
 
 import { GameController } from "./GameController.js";
 import { UIController } from "./UIController.js";
